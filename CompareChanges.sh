@@ -10,5 +10,5 @@ EXPORT_DIR="exported"
 for table in network_addresses network aliasclient; do
     mv "$EXPORT_DIR/$table.csv" "$EXPORT_DIR/${table}_old.csv"
 done
-./OverrideHostnames.sh
+./UpdateHostnames.sh
 ./ExportNetworkInfo.sh
