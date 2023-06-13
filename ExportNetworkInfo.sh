@@ -13,11 +13,13 @@ DB="/etc/pihole/pihole-FTL.db"
 # CREATE TABLE IF NOT EXISTS "network_addresses" ( network_id INTEGER             NOT NULL, ip     TEXT UNIQUE NOT NULL, lastSeen  INTEGER NOT NULL DEFAULT (cast(strftime('%s', 'now') as int)), name TEXT, nameUpdated INTEGER, FOREIGN KEY(network_id) REFERENCES network(id));
 # CREATE TABLE IF NOT EXISTS "network"           ( id         INTEGER PRIMARY KEY NOT NULL, hwaddr TEXT UNIQUE NOT NULL, interface TEXT    NOT NULL, firstSeen INTEGER NOT NULL, lastQuery INTEGER NOT NULL, numQueries INTEGER NOT NULL, macVendor TEXT, aliasclient_id INTEGER);
 # CREATE TABLE                aliasclient        ( id         INTEGER PRIMARY KEY NOT NULL, name   TEXT        NOT NULL, comment   TEXT);
-for table in network_addresses network aliasclient; do
+# CREATE TABLE                client_by_id       ( id         INTEGER PRIMARY KEY         , ip     TEXT        NOT NULL, name      TEXT);
+for table in network_addresses network aliasclient client_by_id; do
     case $table in
         network_addresses) echo "network_id,ip,lastSeen,name,nameUpdated" ;;
         network)           echo "id,hwaddr,interface,firstSeen,lastQuery,numQueries,macVendor,aliasclient_id" ;;
         aliasclient)       echo "id,name,comment" ;;
+        client_by_id)      echo "id,ip,name" ;;
     esac > "$EXPORT_DIR/$table.csv"
 
     sqlite3 "$DB" "SELECT * FROM $table" | tr "," " " | tr "|" "," >> "$EXPORT_DIR/$table.csv"
