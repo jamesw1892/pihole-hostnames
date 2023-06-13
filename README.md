@@ -20,6 +20,32 @@ The `name` field of the `network_addresses` table in the database `/etc/pihole/p
 
 `ExportNetworkInfo.sh` exports `/etc/pihole/dhcp.leases` and the relevant tables of `/etc/pihole/pihole-FTL.db` to CSV files for easy viewing.
 
+# Aliases
+
+Pi-hole has a relatively new feature called Alias Clients which are intended to group clients under the same name (alias) for statistics. [See this for more information](https://discourse.pi-hole.net/t/info-request-pihole-ftl-db/43120) which suggests it may be incorporated into the web interface in the future. Until then, we add a CSV file and script to do this.
+
+Note that it does group them in the top clients lists (total and blocked), but completely excludes all clients with aliases from the client activity graph.
+
+## Aliases List
+
+Alias that the user wants to set should be stored in `aliases.csv` in simple CSV format similarly to the override hostnames list. Each line should contain a MAC address with lowercase letters and colons followed by a comma followed by an alias name. There must be a trailing newline at the end of the file.
+
+All MAC addresses associated with the same alias name in this CSV file will be grouped under this alias.
+
+An example file has been provided as `example_aliases.csv`.
+
+## Set Aliases Script
+
+`SetAliases.sh` sets alias stored in `/etc/pihole/pihole-FTL.db` according to those in `aliases.csv`.
+
+It does this by creating any aliases that do not already exist in the `aliasclient` table of `/etc/pihole/pihole-FTL.db` with sequential IDs and no comments. Then it links these IDs to the MAC addresses in the `network` table.
+
+Finally a [signal](https://docs.pi-hole.net/ftldns/signals/) is sent to the `pihole-FTL` service to re-load aliases.
+
+## Remove Aliases Script
+
+`RemoveAliases.sh` removes all aliases in `/etc/pihole/pihole-FTL.db` which can be helpful for undoing what the set aliases script did. As long as all aliases were added using the set aliases script, no changes will have been lost as it can always be run again.
+
 # Compare Changes Script
 
 This exports the tables before and after running a given script so the state of the tables can be compared before and after. This can be helpful for catching mistakes as the old state of the tables is known so it can be reset to this. Note we don't do this to dhcp.leases since this doesn't change when updating hostnames.
