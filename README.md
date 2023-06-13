@@ -20,6 +20,6 @@ The `name` field of the `network_addresses` table in the database `/etc/pihole/p
 
 `ExportNetworkInfo.sh` exports `/etc/pihole/dhcp.leases` and the relevant tables of `/etc/pihole/pihole-FTL.db` to CSV files for easy viewing.
 
-## Compare Changes Script
+# Compare Changes Script
 
-This exports the tables before and after updating the hostnames so they can be compared. It can also be helpful for catching mistakes as the old state of the tables is known so it can be reset to this. Note we don't do this to dhcp.leases since this doesn't change when updating hostnames.
+This exports the tables before and after running a given script so the state of the tables can be compared before and after. This can be helpful for catching mistakes as the old state of the tables is known so it can be reset to this. Note we don't do this to dhcp.leases since this doesn't change when updating hostnames.
